@@ -1,20 +1,17 @@
 import json
+from confluent_kafka import Consumer
 
 from pizza import Pizza, PizzaOrder
-from configparser import ConfigParser
-from confluent_kafka import Producer, Consumer
+from pizzaservice.config.main import KafkaConfig
 
-# Configure the Kafka properties
-config_parser = ConfigParser(interpolation=None)
-config_file = open('src/pizza-service/config.properties', 'r')
-config_parser.read_file(config_file)
-# Configure the producer
-producer_config = dict(config_parser['kafka_client'])
-# Configure the consumer
-consumer_config = dict(config_parser['kafka_client'])
-consumer_config.update(config_parser['consumer'])
-# Create a Kafka producer
-pizza_producer = Producer(producer_config)
+# Configuration of the Kafka client
+kafka = KafkaConfig(service="pizza")
+producer_config = kafka.config()[0]
+consumer_config = kafka.config()[0]
+# Configure and update the Kafka consumer
+consumer_config.update(kafka.config()[1]['consumer'])
+
+pizza_producer = kafka.producer(producer_config)
 
 pizza_warmer = {}
 
@@ -62,7 +59,6 @@ def load_orders():
         elif event.error():
             print(f'Bummer - {event.error()}')
         else:
-            print("yes")
             pizza = json.loads(event.value())
             add_pizza(pizza['order_id'], pizza)
 

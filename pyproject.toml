@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "PizzaGenerator"
+version = "0.1.0"
+description = "An application to generate pizzas via event messages."
+authors = ["SusTheCoder <suscoder@outlook.com>"]
+readme = "README.md"
+packages = [{include = "pizzaservice"}]
+
+[tool.poetry.dependencies]
+python = ">=3.12"
+flask = "^3.0.3"
+confluent-kafka = "^2.5.3"
+configparser = "^5.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
